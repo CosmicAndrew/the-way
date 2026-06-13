@@ -5,3 +5,7 @@ dist/
 
 # git worktrees (isolated workspaces; shared convention across agents)
 .worktrees/
+
+# local test artifacts
+*.png
+devserver.log
