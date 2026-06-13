@@ -59,4 +59,10 @@ export const chapters = [
   },
 ];
 
-export const audioTracks = chapters.map((_, i) => `/audio/chapter-${i + 1}.mp3`);
+// Three audio buses, one source per chapter per bus. Files live in
+// public/audio/<bus>/chapter-N.mp3; missing files fail silently (lazy-loaded).
+export const audioBuses = {
+  narration: chapters.map((_, i) => `/audio/narration/chapter-${i + 1}.mp3`),
+  score: chapters.map((_, i) => `/audio/score/chapter-${i + 1}.mp3`),
+  ambience: chapters.map((_, i) => `/audio/ambience/chapter-${i + 1}.mp3`),
+};
