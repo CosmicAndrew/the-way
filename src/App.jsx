@@ -5,6 +5,7 @@ import { AudioManager } from './audio/AudioManager.js';
 import { useScrollProgress } from './hooks/useScrollProgress.js';
 import { useChapter } from './hooks/useChapter.js';
 import { useReducedMotion } from './hooks/useReducedMotion.js';
+import { useCrazyGames } from './hooks/useCrazyGames.js';
 import { Overlay } from './ui/Overlay.jsx';
 import { ProgressBar } from './ui/ProgressBar.jsx';
 import { MuteButton } from './ui/MuteButton.jsx';
@@ -20,11 +21,13 @@ export default function App() {
   const reducedMotion = useReducedMotion();
   const { progress } = useScrollProgress();
   const { chapter, transitioning } = useChapter(reducedMotion ? 0 : progress);
+  const cg = useCrazyGames();
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    cg.loadingStart();
     const app = new Application(canvas);
     app.setCanvasFillMode(FILLMODE_FILL_WINDOW);
     app.setCanvasResolution(RESOLUTION_AUTO);
@@ -42,13 +45,26 @@ export default function App() {
     });
 
     setReady(true);
+    cg.loadingStop();
 
     return () => {
       window.removeEventListener('resize', handleResize);
       if (settleTimerRef.current) clearTimeout(settleTimerRef.current);
       app.destroy();
     };
-  }, []);
+  }, [cg]);
+
+  // CrazyGames gameplay signals: active while the tab is visible after load.
+  useEffect(() => {
+    if (!ready) return;
+    cg.gameplayStart();
+    const onVis = () => (document.hidden ? cg.gameplayStop() : cg.gameplayStart());
+    document.addEventListener('visibilitychange', onVis);
+    return () => {
+      document.removeEventListener('visibilitychange', onVis);
+      cg.gameplayStop();
+    };
+  }, [ready, cg]);
 
   useEffect(() => {
     if (!sceneManagerRef.current || !audioRef.current) return;

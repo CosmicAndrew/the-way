@@ -1,4 +1,4 @@
-import { Entity, Color, StandardMaterial, Vec3, MeshInstance, Mesh, BoxGeometry, PlaneGeometry } from 'playcanvas';
+import { Entity, Vec2, Color, StandardMaterial, Vec3, MeshInstance, Mesh, BoxGeometry, PlaneGeometry } from 'playcanvas';
 import { createRedRain } from '../particles/redRain.js';
 
 export function Chapter6(app, root) {

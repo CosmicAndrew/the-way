@@ -1,4 +1,4 @@
-import { Entity, Color, StandardMaterial, Vec3, MeshInstance, Mesh, PlaneGeometry, BoxGeometry } from 'playcanvas';
+import { Entity, Color, StandardMaterial, Vec2, Vec3, MeshInstance, Mesh, PlaneGeometry, BoxGeometry } from 'playcanvas';
 import { createStarfield } from '../particles/starfield.js';
 
 export function Chapter1(app, root) {

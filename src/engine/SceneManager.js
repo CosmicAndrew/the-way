@@ -34,6 +34,9 @@ export class SceneManager {
 
     this.chapterBuilders = builders.map((m, i) => m.default || m[`Chapter${i + 1}`]);
 
+    // Dev StrictMode can destroy the app while this async load is in flight; bail if so.
+    if (!this.app || !this.app.root) return;
+
     for (let i = 0; i < 7; i++) {
       const root = new Entity(`chapter-${i}`);
       root.enabled = false;
@@ -50,6 +53,9 @@ export class SceneManager {
     const chapterData = chapters[index];
     const prevRoot = this.activeIndex >= 0 ? this.chapterRoots[this.activeIndex] : null;
     const nextRoot = this.chapterRoots[index];
+    // Chapters load asynchronously (_loadChapters); ignore activation calls until the
+    // target root exists. _loadChapters re-activates the current chapter once ready.
+    if (!nextRoot || !chapterData) return;
 
     if (instant) {
       this.camera.snapTo(chapterData.cameraPos, chapterData.cameraLookAt);
@@ -62,7 +68,11 @@ export class SceneManager {
     }
 
     if (!nextRoot.children.length && this.chapterBuilders[index]) {
-      this.chapterBuilders[index](this.app, nextRoot);
+      try {
+        this.chapterBuilders[index](this.app, nextRoot);
+      } catch (e) {
+        console.error(`[SceneManager] chapter ${index} build failed:`, e);
+      }
     }
 
     nextRoot.enabled = true;
@@ -70,14 +80,16 @@ export class SceneManager {
     if (chapterData.ambientColor) {
       this.app.scene.ambientLight = chapterData.ambientColor;
     }
+    // PlayCanvas 2.x: scene.fog is a read-only FogParams object; set its fields.
+    const fog = this.app.scene.fog;
     if (chapterData.fog) {
-      this.app.scene.fog = chapterData.fog.type || 'linear';
-      this.app.scene.fogColor = chapterData.fog.color || new Color(0, 0, 0);
-      this.app.scene.fogStart = chapterData.fog.start ?? 0;
-      this.app.scene.fogEnd = chapterData.fog.end ?? 50;
-      this.app.scene.fogDensity = chapterData.fog.density ?? 0.01;
+      fog.type = chapterData.fog.type || 'linear';
+      fog.color = chapterData.fog.color || new Color(0, 0, 0);
+      fog.start = chapterData.fog.start ?? 0;
+      fog.end = chapterData.fog.end ?? 50;
+      fog.density = chapterData.fog.density ?? 0.01;
     } else {
-      this.app.scene.fog = 'none';
+      fog.type = 'none';
     }
 
     this.activeIndex = index;
