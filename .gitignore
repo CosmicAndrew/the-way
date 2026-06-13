@@ -7,5 +7,6 @@ dist/
 .worktrees/
 
 # local test artifacts
-*.png
+render_proof*.png
+canvas_only_*.png
 devserver.log
