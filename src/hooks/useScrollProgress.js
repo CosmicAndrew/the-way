@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+const SAVE_KEY = 'the-way:progress';
+
 export function useScrollProgress() {
   const [progress, setProgress] = useState(0);
   const [scrollY, setScrollY] = useState(0);
@@ -8,9 +10,29 @@ export function useScrollProgress() {
     let target = 0;
     let current = 0;
     let rafId;
+    let saveTimer = null;
+
+    // Restore last position (saved as a fraction so it survives layout changes).
+    try {
+      const saved = parseFloat(localStorage.getItem(SAVE_KEY));
+      if (saved > 0 && saved <= 1) {
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        window.scrollTo(0, saved * maxScroll);
+        target = current = window.scrollY;
+      }
+    } catch { /* storage unavailable (private mode / iframe) */ }
 
     const handleScroll = () => {
       target = window.scrollY;
+      if (!saveTimer) {
+        saveTimer = setTimeout(() => {
+          saveTimer = null;
+          const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+          try {
+            localStorage.setItem(SAVE_KEY, String(maxScroll > 0 ? target / maxScroll : 0));
+          } catch { /* ignore */ }
+        }, 500);
+      }
     };
 
     const tick = () => {
@@ -28,6 +50,7 @@ export function useScrollProgress() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
       cancelAnimationFrame(rafId);
+      if (saveTimer) clearTimeout(saveTimer);
     };
   }, []);
 
