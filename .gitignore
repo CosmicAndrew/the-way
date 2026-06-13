@@ -9,4 +9,4 @@ dist/
 # local test artifacts
 render_proof*.png
 canvas_only_*.png
-devserver.log
+devserver*.log
