@@ -21,16 +21,16 @@ export function Overlay({ chapter, visible, transitioning }) {
 
   return (
     <div className="overlay flex items-center justify-center" ref={containerRef} aria-live="polite">
-      <div className="text-center px-6 max-w-2xl">
+      <div className="text-center px-4 sm:px-6 max-w-2xl">
         <p
           ref={verseRef}
-          className="font-cinzel text-gold-400 text-2xl md:text-4xl lg:text-5xl leading-relaxed tracking-wide drop-shadow-[0_0_20px_rgba(212,168,67,0.3)]"
+          className="font-cinzel text-gold-400 text-xl sm:text-2xl md:text-4xl lg:text-5xl leading-relaxed tracking-wide drop-shadow-[0_0_20px_rgba(212,168,67,0.3)]"
         >
           {data.scripture}
         </p>
         <p
           ref={refRef}
-          className="font-inter text-gold-500/60 text-sm md:text-base mt-6 tracking-widest uppercase"
+          className="font-inter text-gold-500/60 text-xs sm:text-sm md:text-base mt-4 sm:mt-6 tracking-widest uppercase"
         >
           {data.reference}
         </p>
