@@ -1,4 +1,4 @@
-import { Entity, Color, StandardMaterial, Vec3, MeshInstance, Mesh, PlaneGeometry, Shader, SEMANTIC_POSITION, ShaderMaterial } from 'playcanvas';
+import { Entity, Vec2, Color, StandardMaterial, Vec3, MeshInstance, Mesh, PlaneGeometry, BoxGeometry, SEMANTIC_POSITION, ShaderMaterial } from 'playcanvas';
 import { createDove } from '../particles/dove.js';
 
 export function Chapter3(app, root) {
@@ -10,11 +10,11 @@ export function Chapter3(app, root) {
 
 function createWaterPlane(app, root) {
   const vshader = `
-    attribute vec3 aPosition;
+    in vec3 aPosition;
     uniform mat4 matrix_viewProjection;
     uniform mat4 matrix_model;
-    varying vec2 vUv;
-    varying vec3 vWorldPos;
+    out vec2 vUv;
+    out vec3 vWorldPos;
     void main(void) {
       vec4 worldPos = matrix_model * vec4(aPosition, 1.0);
       vWorldPos = worldPos.xyz;
@@ -24,8 +24,8 @@ function createWaterPlane(app, root) {
 
   const fshader = `
     precision highp float;
-    varying vec2 vUv;
-    varying vec3 vWorldPos;
+    in vec2 vUv;
+    in vec3 vWorldPos;
     uniform float uTime;
     void main(void) {
       float ripple = sin(vWorldPos.x * 3.0 + uTime) * cos(vWorldPos.z * 3.0 + uTime * 0.7) * 0.3;
@@ -39,13 +39,12 @@ function createWaterPlane(app, root) {
       gl_FragColor = vec4(color, 0.75);
     }`;
 
-  const shader = new Shader(app.graphicsDevice, {
+  const mat = new ShaderMaterial({
+    uniqueName: 'water',
     attributes: { aPosition: SEMANTIC_POSITION },
-    vshader,
-    fshader,
+    vertexGLSL: vshader,
+    fragmentGLSL: fshader,
   });
-
-  const mat = new ShaderMaterial({ shader });
   mat.blendType = 0;
   mat.setParameter('uTime', 0);
   mat.update();

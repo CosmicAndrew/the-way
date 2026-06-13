@@ -1,4 +1,4 @@
-import { Entity, Color, StandardMaterial, Vec3, MeshInstance, Mesh, BoxGeometry, PlaneGeometry, LIGHTTYPE_OMNI, LightComponent } from 'playcanvas';
+import { Entity, Vec2, Color, StandardMaterial, Vec3, MeshInstance, Mesh, BoxGeometry, PlaneGeometry, LIGHTTYPE_OMNI, LightComponent } from 'playcanvas';
 
 export function Chapter2(app, root) {
   createGround(app, root);

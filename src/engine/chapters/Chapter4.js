@@ -1,4 +1,4 @@
-import { Entity, Color, StandardMaterial, Vec3, MeshInstance, Mesh, PlaneGeometry } from 'playcanvas';
+import { Entity, Vec2, Color, StandardMaterial, Vec3, MeshInstance, Mesh, PlaneGeometry } from 'playcanvas';
 import { createCrowd } from '../particles/crowd.js';
 
 export function Chapter4(app, root) {
