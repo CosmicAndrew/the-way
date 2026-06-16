@@ -10,3 +10,6 @@ dist/
 render_proof*.png
 canvas_only_*.png
 devserver*.log
+
+# heavy course-archive media — never commit (GitHub 100MB cap)
+research/**/media/
